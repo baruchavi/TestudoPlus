@@ -1,0 +1,20 @@
+{
+    "manifest_version": 3,
+    "name": "TestudoPlus",
+    "version": "0.1",
+    "icons": {
+        "128": "icons/version2.128.png"
+    },
+    "description": "Upgrades the Testudo class search system to make it more usable and efficient (I hope)",
+    "content_scripts": [
+        {
+            "js": [
+                "scripts/planetTerp.js",
+                "scripts/advancedSearch.js"
+            ],
+            "matches": [
+                "https://app.testudo.umd.edu/soc/*"
+            ]
+        }
+    ]
+}
