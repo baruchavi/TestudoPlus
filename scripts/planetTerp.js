@@ -28,6 +28,7 @@ function addProfReviewButtons(classElm) {
 if (document.querySelector("#courses-page")) {
     console.log("There are classes listed here")
     document.querySelectorAll(".course").forEach(e=>{
+        console.log(e.id)
         // Add review course button to each class
         reviewButton = document.createElement("button");
         reviewButton.innerText = "Get Reviews";
@@ -40,7 +41,7 @@ if (document.querySelector("#courses-page")) {
             addProfReviewButtons(e)
         }
         // Otherwise listen for show sections to be clicked, then add  review buttons
-        else {
+        else if (e.querySelector(".toggle-sections-link")){
             e.querySelector(".toggle-sections-link").addEventListener("click", section=>{
                 console.log("clicked")
                 setTimeout(()=>{addProfReviewButtons(e)}, 500)
