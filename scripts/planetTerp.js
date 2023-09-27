@@ -11,13 +11,17 @@ function addProfReviewButtons(classElm) {
         return profReviewButton
     }
 
+    getProfData = async (prof, name) => {
+        const response = await chrome.runtime.sendMessage({'prof': name})
+        console.log("got data for "+name+":")
+        console.log(response.data)
+        prof.appendChild(document.createTextNode(response.data['average_rating']))
+    }
+
     classElm.querySelectorAll(".section-instructors").forEach(prof => {
-        console.log(profs)
-        if (!profs.includes(prof.innerText)) {
-            console.log(prof.innerText)
-            profs.push(prof.innerText)
-            prof.appendChild(makeButton(prof.innerText))
-        }
+        profName = prof.innerText
+        console.log("sending "+profName)
+        getProfData(prof, profName);
     })
 }
 
