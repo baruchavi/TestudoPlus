@@ -2,6 +2,10 @@
     "manifest_version": 3,
     "name": "TestudoPlus",
     "version": "0.1",
+    "action": {
+        "default_title": "Testudo Plus",
+        "default_popup": "popups/home.html"
+    },
     "icons": {
         "128": "icons/version2.128.png"
     },

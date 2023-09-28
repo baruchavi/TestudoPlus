@@ -3,9 +3,10 @@ chrome.runtime.onMessage.addListener(
         url = `https://planetterp.com/api/v1/professor?name=${request.prof}`
 
         caches.match(url).then((response) => {
-            if (response !== undefined) {
+            expTime = 86400000
+            if (response !== undefined && parseInt(response.headers.get("sw-fetched-on"))+expTime > new Date().getTime()) {
                 response.json().then(json => {
-                    console.log("serving cached response " + json)
+                    console.log("serving cached response")
                     sendResponse({error: false, data: json})
                 })
             } else {
@@ -18,17 +19,16 @@ chrome.runtime.onMessage.addListener(
                         var headers = new Headers(responseClone.headers);
 					    headers.append('sw-fetched-on', new Date().getTime());
                         responseClone.blob().then(body=>{
-                            console.log("putting dateed response")
-                            console.log(JSON.stringify(Object.fromEntries(headers)))
-                            cache.put(`https://planetterp.com/api/v1/professor?name=${request.prof}`, 
-                            new Response(
+                            console.log("putting expiring response")
+                            newresp = new Response(
                                 body,
                                 {
                                     status: responseClone.status,
                                     statusText: responseClone.statusText,
                                     headers: headers
                                 }
-                            ));
+                            )
+                            cache.put(`https://planetterp.com/api/v1/professor?name=${request.prof}`, newresp);
                         })
                     });
                     response.json().then(json => {
