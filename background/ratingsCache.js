@@ -3,8 +3,6 @@ chrome.runtime.onMessage.addListener(
         url = `https://planetterp.com/api/v1/professor?name=${request.prof}`
 
         caches.match(url).then((response) => {
-            // caches.match() always resolves
-            // but in case of success response will have value
             if (response !== undefined) {
                 response.json().then(json => {
                     console.log("serving cached response " + json)
@@ -14,14 +12,24 @@ chrome.runtime.onMessage.addListener(
                 console.log("fetching for "+request.prof+" @ url "+`https://planetterp.com/api/v1/professor?name=${request.prof}`)
                 fetch(`https://planetterp.com/api/v1/professor?name=${request.prof}`)
                 .then((response) => {
-                    // response may be used only once
-                    // we need to save clone to put one copy in cache
-                    // and serve second one
                     let responseClone = response.clone();
-                    let respClone2 = response.clone();
         
                     caches.open("v1").then((cache) => {
-                        cache.put(`https://planetterp.com/api/v1/professor?name=${request.prof}`, responseClone);
+                        var headers = new Headers(responseClone.headers);
+					    headers.append('sw-fetched-on', new Date().getTime());
+                        responseClone.blob().then(body=>{
+                            console.log("putting dateed response")
+                            console.log(JSON.stringify(Object.fromEntries(headers)))
+                            cache.put(`https://planetterp.com/api/v1/professor?name=${request.prof}`, 
+                            new Response(
+                                body,
+                                {
+                                    status: responseClone.status,
+                                    statusText: responseClone.statusText,
+                                    headers: headers
+                                }
+                            ));
+                        })
                     });
                     response.json().then(json => {
                         sendResponse({error: false, data: json})
