@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
-    "name": "TestudoPlus",
-    "version": "1.0",
+    "name": "Testudo Plus",
+    "version": "1.1",
     "action": {
         "default_title": "Testudo Plus",
         "default_popup": "popups/home.html"
@@ -9,7 +9,7 @@
     "icons": {
         "128": "icons/version3.128.png"
     },
-    "description": "Upgrades the Testudo class search system to make it more usable and efficient (I hope)",
+    "description": "Upgrades the Testudo class search system to make it more usable and efficient",
     "content_scripts": [
         {
             "js": [
