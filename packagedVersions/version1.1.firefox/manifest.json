@@ -1,9 +1,9 @@
 {
     "manifest_version": 3,
-    "name": "Better Testudo",
-    "version": "1.2",
+    "name": "Testudo Plus",
+    "version": "1.1",
     "action": {
-        "default_title": "Better Testudo",
+        "default_title": "Testudo Plus",
         "default_popup": "popups/home.html"
     },
     "icons": {
