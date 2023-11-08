@@ -47,7 +47,7 @@ class ClassWatcher {
 function addProfReviews(classElm) {
     // For each unique profs in for each class - get their reviews
     getProfData = async (prof, name) => {
-        const response = await chrome.runtime.sendMessage({'prof': name})
+        const response = await chrome.runtime.sendMessage({'prof': name, 'type': 'prof'})
         console.log("got data for "+name+":")
         console.log(response.data)
         if ("error" in response.data) {
@@ -88,6 +88,69 @@ function addProfReviews(classElm) {
 if (document.querySelector("#courses-page")) {
     console.log("There are classes listed here")
     document.querySelectorAll(".course").forEach(e=>{
+        chrome.runtime.sendMessage({'course': e.querySelector(".course-id").innerHTML, 'type': 'grades'}).then(response => {
+            response = response.data
+            if (response.length > 0) {
+                grades = {
+                    "A+": 0,
+                    "A": 0,
+                    "A-": 0,
+                    "B+": 0,
+                    "B": 0,
+                    "B-": 0,
+                    "C+": 0,
+                    "C": 0,
+                    "C-": 0,
+                    "D+": 0,
+                    "D": 0,
+                    "D-": 0,
+                    "F": 0,
+                    "W": 0,
+                    "Other": 0,
+                    "Total": 0
+                }
+                response.forEach(i=>{
+                    grades["A+"] += i["A+"]
+                    grades["A"] += i["A"]
+                    grades["A-"] += i["A-"]
+                    grades["B+"] += i["B+"]
+                    grades["B"] += i["B"]
+                    grades["B-"] += i["B-"]
+                    grades["C+"] += i["C+"]
+                    grades["C"] += i["C"]
+                    grades["C-"] += i["C-"]
+                    grades["D+"] += i["D+"]
+                    grades["D"] += i["D"]
+                    grades["D-"] += i["D-"]
+                    grades["F"] += i["F"]
+                    grades["W"] += i["W"]
+                    grades["Other"] += i["Other"]
+                    grades["Total"] += i["A+"] + i["A"] + i["A-"] + i["B+"] + i["B"] + i["B-"] + i["C+"] + i["C"] + i["C-"] + i["D+"] + i["D"] + i["D-"] + i["F"] + i["W"] + i["Other"]
+                })
+
+                average = grades["A+"]*4 + 
+                            grades["A"]*4 + 
+                            grades["A-"]*3.7 + 
+                            grades["B+"]*3.3 + 
+                            grades["B"]*3 + 
+                            grades["B-"]*2.7 + 
+                            grades["C+"]*2.3 + 
+                            grades["C"]*2 + 
+                            grades["C-"]*1.7 + 
+                            grades["D+"]*1.3 + 
+                            grades["D"]*1 + 
+                            grades["D-"]*.07 + 
+                            grades["F"]*0
+                console.log(grades)
+                console.log(`total top: ${average}`)
+                console.log(`total bottom: ${grades["Total"] - (grades["W"] + grades["Other"])}`)
+                average = average / (grades["Total"] - (grades["W"] + grades["Other"]))
+    
+                console.log(average)
+                e.querySelector(".course-title").innerHTML += " " + average.toFixed(2)
+            }
+        })
+
         // If sections are visible on page load then add review button
         if (e.querySelector(".section-instructors")) {
             addProfReviews(e)
@@ -100,7 +163,9 @@ if (document.querySelector("#courses-page")) {
                     e.querySelector(".sections-fieldset legend"), 
                     'loading', 
                     ()=>{}, 
-                    ()=>{addProfReviews(e)})
+                    ()=>{
+                        addProfReviews(e)
+                    })
                 //setTimeout(()=>{addProfReviews(e)}, 500)
             }, { once : true })
         }
